@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keeper App</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const Note = ({ title, content, onDelete }) => (
+      <div className="bg-white p-4 rounded shadow-md m-2 w-64 break-words">
+        <h3 className="text-lg font-bold">{title}</h3>
+        <p className="text-gray-600 break-words overflow-auto max-h-40">{content}</p>
+        <button onClick={onDelete} className="mt-2 bg-yellow-500 text-white px-2 py-1 rounded">
+          Delete
+        </button>
+      </div>
+    );
+
+    const App = () => {
+      const [notes, setNotes] = React.useState([]);
+      const [title, setTitle] = React.useState('');
+      const [content, setContent] = React.useState('');
+
+      const handleAddNote = () => {
+        if (!title.trim() || !content.trim()) {
+          alert("Title and content cannot be empty!");
+          return;
+        }
+        setNotes([...notes, { title, content, id: Date.now() }]);
+        setTitle('');
+        setContent('');
+      };
+
+      const handleDeleteNote = (id) => {
+        setNotes(notes.filter(note => note.id !== id));
+      };
+
+      return (
+        <div className="flex flex-col min-h-screen bg-gray-100">
+          <div className="flex-grow p-4">
+            <h1 className="text-3xl font-bold text-white bg-yellow-500 p-4 rounded-t-lg">Keeper</h1>
+            <div className="bg-white p-4 rounded-b-lg shadow-md mb-4 flex flex-col md:flex-row items-center">
+              <input
+                type="text"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="border p-2 mb-2 md:mb-0 md:mr-2 w-full md:w-1/3"
+              />
+              <textarea
+                placeholder="Take a note..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="border p-2 mb-2 md:mb-0 w-full md:w-2/3"
+              />
+              <button onClick={handleAddNote} className="bg-green-500 text-white px-4 py-2 rounded">Add</button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
+              {notes.map(note => (
+                <Note
+                  key={note.id}
+                  title={note.title}
+                  content={note.content}
+                  onDelete={() => handleDeleteNote(note.id)}
+                />
+              ))}
+            </div>
+          </div>
+          <footer className="text-center text-white bg-yellow-500 p-4">
+            © 2025 Keeper App. All rights reserved.
+          </footer>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
